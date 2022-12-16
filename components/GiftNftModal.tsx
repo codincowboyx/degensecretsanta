@@ -87,7 +87,7 @@ export const GiftNftModal = ({
                     height={200}
                 />
                 {isSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${data?.hash}`} target="_blank" rel="noopener noreferrer">View on Etherscan</a>}
-                {!read && <Button onClick={() => write?.()} className={clsx(styles.button, sartoshiFont.className)}>{isSuccess ? 'Approved' : 'Approve Collection Transfer'}</Button>}
+                {!read && <Button onClick={() => write?.()} className={clsx(styles.button, sartoshiFont.className)}>{isSuccess ? 'Approved' : 'Approve Collection'}</Button>}
                 {read && <div>Collection is approved</div>}
                 {secretSantaIsSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`} target="_blank" rel="noopener noreferrer">View on Etherscan</a>}
                 {read && !secretSantaIsSuccess && <Button onClick={() => secretSantaWrite?.()} className={clsx(styles.button, sartoshiFont.className)}>{secretSantaIsLoading ? <CircularProgress /> : 'Gift NFT'}</Button>}
