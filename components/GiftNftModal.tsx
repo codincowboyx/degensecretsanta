@@ -72,10 +72,10 @@ export const GiftNftModal = ({
                     width={200}
                     height={200}
                 />
-                {isSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${data?.hash}`} target="_blank">View on Etherscan</a>}
+                {isSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${data?.hash}`} target="_blank" rel="noopener noreferrer">View on Etherscan</a>}
                 {!read && <Button onClick={() => write?.()}>{isSuccess ? 'Approved' : 'Approve Collection Transfer'}</Button>}
                 {read && <div>Collection is approved</div>}
-                {secretSantaIsSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`} target="_blank">View on Etherscan</a>}
+                {secretSantaIsSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`} target="_blank" rel="noopener noreferrer">View on Etherscan</a>}
                 {read && !secretSantaIsSuccess && <Button onClick={() => secretSantaWrite?.()}>{secretSantaIsLoading ? <CircularProgress /> : 'Gift NFT'}</Button>}
                 {secretSantaIsSuccess && <p>thanks mfer</p>}
             </div>

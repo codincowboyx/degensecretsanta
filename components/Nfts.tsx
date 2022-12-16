@@ -32,7 +32,7 @@ export const Nfts = () => {
             {nfts && nfts.ownedNfts && nfts.ownedNfts.map(nft => {
                 const media = nft.media.length && nft.media[0].thumbnail ? nft.media[0].thumbnail : nft.media[0].gateway;
                 return (
-                <div className={styles.card} onClick={() => {
+                <div className={styles.card} key={`${nft.contract.address}_${nft.tokenId}`} onClick={() => {
                     setSelectedNft({
                         name: nft.title,
                         media,

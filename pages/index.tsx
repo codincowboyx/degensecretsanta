@@ -57,13 +57,13 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Send me your worthless jpegs and get a random one from Santa's bag
+          {`Send me your worthless jpegs and get a random one from Santa's bag`}
         </p>
 
         <h2 className={styles.title}>{`Santa's Bag: ${santasBag === undefined ? '--' : santasBag}`}</h2>
         <h2 className={styles.title}>{`Claimable Amount: ${data === undefined ? '--' : data}`}</h2>
 
-        {secretSantaIsSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`} target="_blank">View on Etherscan</a>}
+        {secretSantaIsSuccess && <a href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`} target="_blank" rel="noopener noreferrer">View on Etherscan</a>}
         {data != undefined && data > 0 && <Button disabled={!data} onClick={() => { secretSantaWrite?.() }}>surprise me</Button>}
         <Nfts />
       </main>
