@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useAccount, erc721ABI } from 'wagmi';
 import styles from '../styles/Nfts.module.css';
 import { AlchemyContext } from './AlchemyProvider';
@@ -6,14 +6,19 @@ import { NftExcludeFilters, OwnedNftsResponse } from 'alchemy-sdk';
 import Image from 'next/image';
 import { GiftNftModal, IGiftNftModal } from './GiftNftModal';
 
-export const Nfts = () => {
+interface INfts {
+    triggerNfts?: boolean;
+    setTriggerNfts: (trigger: boolean) => void;
+}
+
+export const Nfts = ({ triggerNfts, setTriggerNfts }: INfts) => {
     const alchemy = useContext(AlchemyContext);
     const { address, isConnecting, isDisconnected } = useAccount();
     const [nfts, setNfts] = useState<OwnedNftsResponse>();
     const [error, setError] = useState();
     const [selectedNft, setSelectedNft] = useState<IGiftNftModal>();
 
-    useEffect(() => {
+    const getNfts = useCallback(() => {
         if (address && !isConnecting && !isDisconnected) {
             alchemy.nft.getNftsForOwner(address, { pageSize: 200, excludeFilters: [NftExcludeFilters.SPAM, NftExcludeFilters.AIRDROPS] })
                 .then(value => {
@@ -22,8 +27,14 @@ export const Nfts = () => {
                 })
                 .catch(errorTemp => setError(errorTemp))
         }
-       
-    }, [alchemy, address, isConnecting, isDisconnected])
+    }, [alchemy, address, !isConnecting, !isDisconnected]);
+
+    useEffect(() => {
+        if (triggerNfts) {
+            getNfts();
+            setTriggerNfts(false);
+        }
+    }, [getNfts, triggerNfts])
 
     return (
 
@@ -39,11 +50,13 @@ export const Nfts = () => {
                         tokenId: nft.tokenId,
                         tokenAddress: nft.contract.address,
                         open: true,
-                        handleClose: () => { setSelectedNft(undefined) }
+                        handleClose: () => { setSelectedNft(undefined) },
+                        retriggerNftLoad: setTriggerNfts
                     })
                 }}>
                     <h2>{nft.title}</h2>
                     <Image 
+                        alt="thumnail image"
                         src={`${media}`}
                         width={200}
                         height={200}
