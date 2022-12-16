@@ -1,0 +1,8 @@
+.modal {
+    display: flex;
+    width: 300px;
+    height: 500px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
