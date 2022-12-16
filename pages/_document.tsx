@@ -10,6 +10,7 @@ export default class MyDocument extends Document {
      <Html lang="en">
        <Head>
          {this.props.emotionStyleTags}
+         <link rel="icon" href="/favicon.ico" />
        </Head>
        <body>
          <Main />
