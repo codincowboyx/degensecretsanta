@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import {
   erc721ABI,
+  useContractEvent,
   useAccount,
   useContractRead,
   useContractWrite,
@@ -25,6 +26,7 @@ const sartoshiFont = localFont({ src: "./SartoshiScript-Regular.otf" });
 
 const Home: NextPage = () => {
   const [triggerNftsLoad, setTriggerNftLoad] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { address, isConnecting, isDisconnected } = useAccount();
   const {
@@ -44,26 +46,40 @@ const Home: NextPage = () => {
     functionName: "getNumGiftsAvailable",
   });
 
-  /** SECRET SANTA MAGIC */
-  const { config: secretSantaConfig } = usePrepareContractWrite({
+  useContractEvent({
     address: contractAddress,
     abi: secretSantaAbi,
-    functionName: "surprise",
-  });
-  const {
-    data: secretSantaData,
-    isLoading: secretSantaIsLoading,
-    isSuccess: secretSantaIsSuccess,
-    write: secretSantaWrite,
-  } = useContractWrite(secretSantaConfig);
-
-  useEffect(() => {
-    if (secretSantaIsSuccess && !secretSantaIsLoading) {
-      setTriggerNftLoad(true);
-      refetchBags();
+    eventName: "Gifted",
+    listener(tokenAddress, tokenId, from, numGifted) {
       refetchClaimable();
-    }
-  }, [secretSantaIsLoading, secretSantaIsSuccess]);
+      refetchBags();
+
+      if (from === address) {
+        setTriggerNftLoad(true);
+      }
+    },
+  });
+
+  useContractEvent({
+    address: contractAddress,
+    abi: secretSantaAbi,
+    eventName: "Surprised",
+    listener(tokenAddress, tokenId, from, to, numGiftedReceiver) {
+      refetchClaimable();
+      refetchBags();
+
+      if (to === address) {
+        setTriggerNftLoad(true);
+        setIsSubmitted(false);
+      }
+    },
+  });
+
+  // useEffect(() => {
+  //   if (secretSantaIsSuccess && !secretSantaIsLoading) {
+  //     setTriggerNftLoad(true);
+  //   }
+  // }, [secretSantaIsLoading, secretSantaIsSuccess]);
 
   return (
     <div className={styles.container}>
@@ -88,28 +104,12 @@ const Home: NextPage = () => {
           data === undefined ? "--" : data
         }`}</h2>
         {data === 0 && <p>gotta gift an nft to claim one ya degen</p>}
+        <SurpriseMeButton
+          numClaimable={data as number}
+          isSubmitted={isSubmitted}
+          setIsSubmitted={setIsSubmitted}
+        />
 
-        {secretSantaIsSuccess && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            View on Etherscan
-          </a>
-        )}
-        {data != undefined && data > 0 && (
-          <Button
-            disabled={!data}
-            onClick={() => {
-              secretSantaWrite?.();
-            }}
-            className={styles.glowOnHover}
-          >
-            {secretSantaIsLoading ? <CircularProgress /> : "Surprise Me"}
-          </Button>
-        )}
         {
           <Button
             onClick={() => {
@@ -151,3 +151,81 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+interface ISurpriseButton {
+  numClaimable: number | undefined;
+  isSubmitted: boolean;
+  setIsSubmitted: (sub: boolean) => void;
+}
+
+const SurpriseMeButton = ({
+  numClaimable,
+  isSubmitted,
+  setIsSubmitted,
+}: ISurpriseButton) => {
+  /** SECRET SANTA MAGIC */
+  const {
+    config: secretSantaConfig,
+    isError,
+    error,
+  } = usePrepareContractWrite({
+    address: contractAddress,
+    abi: secretSantaAbi,
+    functionName: "surprise",
+  });
+  const {
+    data: secretSantaData,
+    isLoading: secretSantaIsLoading,
+    isSuccess: secretSantaIsSuccess,
+    isError: secretSantaIsError,
+    error: secretSantaError,
+    write: secretSantaWrite,
+  } = useContractWrite(secretSantaConfig);
+
+  useEffect(() => {
+    if (secretSantaIsError || isError) {
+      setIsSubmitted(false);
+    }
+  }, [secretSantaIsError, isError]);
+
+  return (
+    <>
+      {secretSantaIsSuccess && (
+        <a
+          href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.link}
+        >
+          View on Etherscan
+        </a>
+      )}
+      {numClaimable != undefined && numClaimable > 0 && (
+        <Button
+          disabled={!numClaimable || isSubmitted}
+          onClick={() => {
+            secretSantaWrite?.();
+            setIsSubmitted(true);
+          }}
+          className={styles.glowOnHover}
+        >
+          {isSubmitted ? <CircularProgress /> : "Surprise Me"}
+        </Button>
+      )}
+      {isSubmitted && (
+        <h2 className={styles.subTitle}>...getting your present mfer</h2>
+      )}
+      {secretSantaIsError && (
+        <p>
+          {secretSantaError?.message ??
+            "Error occured check etherscan for more info."}
+        </p>
+      )}
+      {isError && (
+        <p>
+          {error?.message ?? "Error occured check etherscan for more info."}
+        </p>
+      )}
+    </>
+  );
+};

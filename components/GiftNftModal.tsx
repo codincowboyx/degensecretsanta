@@ -11,7 +11,7 @@ import styles from "../styles/GiftNftModal.module.css";
 import degenSecretSantaAbi from "../contracts/degenSecretSanta.json";
 import localFont from "@next/font/local";
 import clsx from "clsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const sartoshiFont = localFont({ src: "../pages/SartoshiScript-Regular.otf" });
 
@@ -38,6 +38,8 @@ export const GiftNftModal = ({
   handleClose,
   retriggerNftLoad,
 }: IGiftNftModal) => {
+  const [checkForApproval, setCheckForApproval] = useState(false);
+
   const { address, isConnecting, isDisconnected } = useAccount();
   const { config } = usePrepareContractWrite({
     address: tokenAddress,
@@ -50,6 +52,7 @@ export const GiftNftModal = ({
     data: read,
     isError: errorRead,
     isLoading: loadingRead,
+    refetch,
   } = useContractRead({
     address: tokenAddress,
     abi: erc721ABI,
@@ -57,25 +60,23 @@ export const GiftNftModal = ({
     args: [address ? address : contractAddress, contractAddress],
   });
 
-  /** SECRET SANTA MAGIC */
-  const { config: secretSantaConfig } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: degenSecretSantaAbi,
-    functionName: "gift",
-    args: [tokenAddress, tokenId],
-  });
-  const {
-    data: secretSantaData,
-    isLoading: secretSantaIsLoading,
-    isSuccess: secretSantaIsSuccess,
-    write: secretSantaWrite,
-  } = useContractWrite(secretSantaConfig);
+  useEffect(() => {
+    let interval: NodeJS.Timer | undefined;
+
+    if (checkForApproval) {
+      interval = setInterval(() => {
+        refetch();
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [checkForApproval]);
 
   useEffect(() => {
-    if (!secretSantaIsLoading && secretSantaIsSuccess) {
-      retriggerNftLoad(true);
+    if (read || errorRead) {
+      setCheckForApproval(false);
     }
-  }, [secretSantaIsSuccess, secretSantaIsLoading]);
+  }, [read, errorRead]);
 
   return (
     <Dialog
@@ -96,34 +97,68 @@ export const GiftNftModal = ({
             View on Etherscan
           </a>
         )}
-        {!read && (
+        {!read && !isSuccess && !checkForApproval && (
           <Button
-            onClick={() => write?.()}
+            onClick={() => {
+              write?.();
+              setCheckForApproval(true);
+            }}
             className={clsx(styles.button, sartoshiFont.className)}
           >
             {isSuccess ? "Approved" : "Approve Collection"}
           </Button>
         )}
+        {!read && isSuccess && checkForApproval && <p>...approving</p>}
         {read && <div>Collection is approved</div>}
-        {secretSantaIsSuccess && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View on Etherscan
-          </a>
+        {read && !checkForApproval && (
+          <GiftNftButton tokenAddress={tokenAddress} tokenId={tokenId} />
         )}
-        {read && !secretSantaIsSuccess && (
-          <Button
-            onClick={() => secretSantaWrite?.()}
-            className={clsx(styles.button, sartoshiFont.className)}
-          >
-            {secretSantaIsLoading ? <CircularProgress /> : "Gift NFT"}
-          </Button>
-        )}
-        {secretSantaIsSuccess && <p>thanks mfer</p>}
       </div>
     </Dialog>
+  );
+};
+
+const GiftNftButton = ({
+  tokenAddress,
+  tokenId,
+}: {
+  tokenAddress: string;
+  tokenId: string;
+}) => {
+  /** SECRET SANTA MAGIC */
+  const { config: secretSantaConfig } = usePrepareContractWrite({
+    address: contractAddress,
+    abi: degenSecretSantaAbi,
+    functionName: "gift",
+    args: [tokenAddress, tokenId],
+  });
+  const {
+    data: secretSantaData,
+    isLoading: secretSantaIsLoading,
+    isSuccess: secretSantaIsSuccess,
+    write: secretSantaWrite,
+  } = useContractWrite(secretSantaConfig);
+
+  return (
+    <>
+      {secretSantaIsSuccess && (
+        <a
+          href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${secretSantaData?.hash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View on Etherscan
+        </a>
+      )}
+      {!secretSantaIsSuccess && (
+        <Button
+          onClick={() => secretSantaWrite?.()}
+          className={clsx(styles.button, sartoshiFont.className)}
+        >
+          {secretSantaIsLoading ? <CircularProgress /> : "Gift NFT"}
+        </Button>
+      )}
+      {secretSantaIsSuccess && <p>thanks mfer</p>}
+    </>
   );
 };
