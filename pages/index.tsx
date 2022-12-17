@@ -17,6 +17,7 @@ import localFont from "@next/font/local";
 import Image from "next/image";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { Surprise, SurpriseNftModal } from "../components/SurpriseNft";
 
 const contractAddress = process.env.NEXT_PUBLIC_SANTA_CONTRACT_ADDRESS
   ? (process.env.NEXT_PUBLIC_SANTA_CONTRACT_ADDRESS as `0x${string}`)
@@ -27,6 +28,7 @@ const sartoshiFont = localFont({ src: "./SartoshiScript-Regular.otf" });
 const Home: NextPage = () => {
   const [triggerNftsLoad, setTriggerNftLoad] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [suprisedNft, setSurprisedNft] = useState<Surprise>();
 
   const { address, isConnecting, isDisconnected } = useAccount();
   const {
@@ -71,6 +73,13 @@ const Home: NextPage = () => {
       if (to === address) {
         setTriggerNftLoad(true);
         setIsSubmitted(false);
+        setSurprisedNft({
+          tokenAddress,
+          tokenId,
+          from,
+          to,
+          numGiftedReceiver
+        })
       }
     },
   });
@@ -121,6 +130,11 @@ const Home: NextPage = () => {
           triggerNfts={triggerNftsLoad}
           setTriggerNfts={setTriggerNftLoad}
         />
+        {suprisedNft && <SurpriseNftModal
+          {...suprisedNft}
+          open={!!suprisedNft}
+          handleClose={() => { setSurprisedNft(undefined); }}
+        />}
       </main>
 
       <footer className={styles.footer}>
