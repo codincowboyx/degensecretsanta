@@ -2,6 +2,11 @@
   padding: 0 2rem;
 }
 
+.link {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
 .main {
   min-height: 100vh;
   padding: 4rem 0;
@@ -19,6 +24,7 @@
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .footer a {
@@ -26,6 +32,8 @@
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  color: black;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .title a {
@@ -92,6 +100,8 @@
   will-change: box-shadow,transform;
   font-size: 18px;
   margin: 0.25rem 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
 .button:focus {
@@ -106,6 +116,69 @@
 .button:active {
   box-shadow: #D6D6E7 0 3px 7px inset;
   transform: translateY(2px);
+}
+
+
+.glowOnHover {
+  width: 220px;
+  height: 50px;
+  border: none;
+  outline: none;
+  color: #fff;
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.glowOnHover:before {
+  content: '';
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+}
+
+.glowOnHover:active {
+  color: #000
+}
+
+.glowOnHover:active:after {
+  background: transparent;
+}
+
+.glowOnHover:hover:before {
+  opacity: 1;
+}
+
+.glowOnHover:after {
+  z-index: -1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
 }
 
 .grid {
@@ -144,6 +217,29 @@
   margin: 0;
   font-size: 1.2rem;
   line-height: 1.5;
+}
+
+.dinoAnimation {
+  position: absolute;
+  bottom: 0;
+  animation: linear infinite;
+  animation-duration: 5s;
+  animation-name: run;
+  -webkit-animation: linear infinite;
+  -webkit-animation-duration: 5s;
+  -webkit-animation-name: run;
+}
+
+@keyframes run {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: 50%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 @media (max-width: 600px) {

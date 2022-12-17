@@ -3,6 +3,7 @@ import * as React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import createEmotionCache from "../utils/createEmotionCache";
+import { getInitColorSchemeScript } from '@mui/material/styles';
 
 export default class MyDocument extends Document {
  render() {
@@ -13,6 +14,7 @@ export default class MyDocument extends Document {
          <link rel="icon" href="/favicon.ico" />
        </Head>
        <body>
+         {getInitColorSchemeScript()}
          <Main />
          <NextScript />
        </body>
