@@ -75,12 +75,6 @@ const Home: NextPage = () => {
     },
   });
 
-  // useEffect(() => {
-  //   if (secretSantaIsSuccess && !secretSantaIsLoading) {
-  //     setTriggerNftLoad(true);
-  //   }
-  // }, [secretSantaIsLoading, secretSantaIsSuccess]);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -104,11 +98,11 @@ const Home: NextPage = () => {
           data === undefined ? "--" : data
         }`}</h2>
         {data === 0 && <p>gotta gift an nft to claim one ya degen</p>}
-        <SurpriseMeButton
+        {data != undefined && data > 0 && (<SurpriseMeButton
           numClaimable={data as number}
           isSubmitted={isSubmitted}
           setIsSubmitted={setIsSubmitted}
-        />
+        />)}
 
         {
           <Button
