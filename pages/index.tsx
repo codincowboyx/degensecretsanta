@@ -12,7 +12,7 @@ import {
 import { Nfts } from "../components/Nfts";
 import styles from "../styles/Home.module.css";
 import secretSantaAbi from "../contracts/degenSecretSanta.json";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import localFont from "@next/font/local";
 import Image from "next/image";
 import clsx from "clsx";
@@ -105,7 +105,7 @@ const Home: NextPage = () => {
         />)}
 
         {
-          <Button
+          <button
             onClick={() => {
               setTriggerNftLoad(true);
               refetchBags();
@@ -114,7 +114,7 @@ const Home: NextPage = () => {
             className={clsx(styles.button, sartoshiFont.className)}
           >
             {"Refetch Nfts"}
-          </Button>
+          </button>
         }
         <p>may take up to 15 minutes for NFTs to refresh</p>
         <Nfts
@@ -195,7 +195,7 @@ const SurpriseMeButton = ({
         </a>
       )}
       {numClaimable != undefined && numClaimable > 0 && (
-        <Button
+        <button
           disabled={!numClaimable || isSubmitted}
           onClick={() => {
             secretSantaWrite?.();
@@ -204,7 +204,7 @@ const SurpriseMeButton = ({
           className={styles.glowOnHover}
         >
           {isSubmitted ? <CircularProgress /> : "Surprise Me"}
-        </Button>
+        </button>
       )}
       {isSubmitted && (
         <h2 className={styles.subTitle}>...getting your present mfer</h2>

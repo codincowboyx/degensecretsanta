@@ -6,7 +6,7 @@ import {
   useAccount,
   useContractRead,
 } from "wagmi";
-import { Dialog, Button, CircularProgress } from "@mui/material";
+import { Dialog, CircularProgress } from "@mui/material";
 import styles from "../styles/GiftNftModal.module.css";
 import degenSecretSantaAbi from "../contracts/degenSecretSanta.json";
 import localFont from "@next/font/local";
@@ -98,7 +98,7 @@ export const GiftNftModal = ({
           </a>
         )}
         {!read && !isSuccess && !checkForApproval && (
-          <Button
+          <button
             onClick={() => {
               write?.();
               setCheckForApproval(true);
@@ -106,7 +106,7 @@ export const GiftNftModal = ({
             className={clsx(styles.button, sartoshiFont.className)}
           >
             {isSuccess ? "Approved" : "Approve Collection"}
-          </Button>
+          </button>
         )}
         {!read && isSuccess && checkForApproval && <p>...approving</p>}
         {read && <div>Collection is approved</div>}
@@ -151,12 +151,12 @@ const GiftNftButton = ({
         </a>
       )}
       {!secretSantaIsSuccess && (
-        <Button
+        <button
           onClick={() => secretSantaWrite?.()}
           className={clsx(styles.button, sartoshiFont.className)}
         >
           {secretSantaIsLoading ? <CircularProgress /> : "Gift NFT"}
-        </Button>
+        </button>
       )}
       {secretSantaIsSuccess && <p>thanks mfer</p>}
     </>
