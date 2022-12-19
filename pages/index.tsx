@@ -18,6 +18,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Surprise, SurpriseNftModal } from "../components/SurpriseNft";
+import { BigNumber } from "ethers";
 
 const contractAddress = process.env.NEXT_PUBLIC_SANTA_CONTRACT_ADDRESS
   ? (process.env.NEXT_PUBLIC_SANTA_CONTRACT_ADDRESS as `0x${string}`)
@@ -176,10 +177,14 @@ const SurpriseMeButton = ({
     config: secretSantaConfig,
     isError,
     error,
+    refetch
   } = usePrepareContractWrite({
     address: contractAddress,
     abi: secretSantaAbi,
     functionName: "surprise",
+    overrides: {
+      gasLimit: BigNumber.from(150000)
+    }
   });
   const {
     data: secretSantaData,
@@ -212,7 +217,10 @@ const SurpriseMeButton = ({
         <button
           disabled={!numClaimable || isSubmitted}
           onClick={() => {
-            secretSantaWrite?.();
+            refetch()
+              .then(() => {
+                secretSantaWrite?.();
+              });
             setIsSubmitted(true);
           }}
           className={styles.glowOnHover}
