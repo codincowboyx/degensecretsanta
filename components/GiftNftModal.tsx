@@ -77,7 +77,7 @@ export const GiftNftModal = ({
       setCheckForApproval(false);
     }
   }, [read, errorRead]);
-
+  console.log(errorRead)
   return (
     <Dialog
       open={open}
@@ -110,9 +110,10 @@ export const GiftNftModal = ({
         )}
         {!read && isSuccess && checkForApproval && <p>...approving</p>}
         {read && <div>Collection is approved</div>}
-        {read && !checkForApproval && (
+        {read && !checkForApproval && !errorRead && !loadingRead && (
           <GiftNftButton tokenAddress={tokenAddress} tokenId={tokenId} />
         )}
+        {errorRead && <div>Error getting collection approval</div>}
       </div>
     </Dialog>
   );
