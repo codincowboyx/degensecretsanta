@@ -85,7 +85,7 @@ export const SurpriseNftModal = ({
             <>
                 <h1 className={styles.title}>Santa has arrived!</h1>
                 <h2 className={styles.subTitle}>{nft.title}</h2>
-                <Image alt="nft thumbnail" src={`${media}`} width={200} height={200} />
+                <img alt="nft thumbnail" src={`${media}`} width={200} height={200} />
             </>
         )
             

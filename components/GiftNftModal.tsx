@@ -87,7 +87,7 @@ export const GiftNftModal = ({
     >
       <div className={clsx(styles.modal, sartoshiFont.className)}>
         <h2>{name}</h2>
-        <Image alt="nft thumbnail" src={`${media}`} width={200} height={200} />
+        <img alt="nft thumbnail" src={`${media}`} width={200} height={200} />
         {isSuccess && (
           <a
             href={`${process.env.NEXT_PUBLIC_ETHERSCAN_LINK}${data?.hash}`}

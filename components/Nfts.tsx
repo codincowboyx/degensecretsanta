@@ -69,7 +69,7 @@ export const Nfts = ({ triggerNfts, setTriggerNfts }: INfts) => {
               }}
             >
               <h2>{nft.title}</h2>
-              <Image
+              <img
                 alt="thumnail image"
                 src={`${media}`}
                 width={200}
