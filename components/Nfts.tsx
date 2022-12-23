@@ -47,11 +47,11 @@ export const Nfts = ({ triggerNfts, setTriggerNfts }: INfts) => {
         nfts.ownedNfts &&
         nfts.ownedNfts.map((nft) => {
           const media =
-            nft.media.length && nft.media[0].thumbnail
+            nft.media.length && nft.media[0] && nft.media[0].thumbnail
               ? nft.media[0].thumbnail
-              : nft.media[0].gateway;
+              : nft.media.length && nft.media[0] ? nft.media[0].gateway : undefined;
           return (
-            <div
+            media && <div
               className={styles.card}
               key={`${nft.contract.address}_${nft.tokenId}`}
               onClick={() => {

@@ -77,7 +77,7 @@ export const GiftNftModal = ({
       setCheckForApproval(false);
     }
   }, [read, errorRead]);
-  console.log(errorRead)
+  
   return (
     <Dialog
       open={open}
