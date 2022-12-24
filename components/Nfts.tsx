@@ -27,6 +27,7 @@ export const Nfts = ({ triggerNfts, setTriggerNfts }: INfts) => {
         })
         .then((value) => {
           console.log(value);
+          
           setNfts(value);
         })
         .catch((errorTemp) => setError(errorTemp));
@@ -45,7 +46,7 @@ export const Nfts = ({ triggerNfts, setTriggerNfts }: INfts) => {
       {error && <div>{error}</div>}
       {nfts &&
         nfts.ownedNfts &&
-        nfts.ownedNfts.map((nft) => {
+        nfts.ownedNfts.filter((nft) => nft.tokenType === "ERC721").map((nft) => {
           const media =
             nft.media.length && nft.media[0] && nft.media[0].thumbnail
               ? nft.media[0].thumbnail
